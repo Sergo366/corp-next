@@ -2,7 +2,7 @@ import React from 'react';
 import {db} from "@/db";
 import {notFound} from "next/navigation";
 import Link from "next/link";
-
+import type {Snippet} from '@prisma/client'
 
 type SnippetDetailsProps =  {
     params: {
@@ -13,8 +13,7 @@ type SnippetDetailsProps =  {
 const SnippetDetails = async (props:SnippetDetailsProps) => {
     const snippet = await db.snippet.findFirst({
         where: { id: parseInt(props.params.id )}
-    }) as {title: string, code: string; id: string};
-    //TODO: why need types here?
+    }) as Snippet
 
     if (!snippet) {
         return notFound()
