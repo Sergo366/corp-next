@@ -24,9 +24,9 @@ async function SnippetEditPage (props:SnippetEdit) {
     return (
         <div>
             Editing {snippet.id} with id {snippet.id}
-            <SnippetEditForm snippet={snippet}/>
+            <SnippetEditForm snippet={snippet}  />
         </div>
     );
-};
+}
 
 export default SnippetEditPage;
