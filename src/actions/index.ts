@@ -2,6 +2,7 @@
 
 import {db} from "@/db";
 import {redirect} from "next/navigation";
+import {revalidatePath} from "next/cache";
 
 export async function editSnippet(id: number, code: string): Promise<void> {
     await db.snippet.update({
@@ -14,6 +15,7 @@ export async function editSnippet(id: number, code: string): Promise<void> {
 export async function deleteSnippet(id: number): Promise<void> {
     await db.snippet.delete({where: { id }})
 
+    revalidatePath('/')
     redirect(`/`)
 }
 
@@ -51,5 +53,6 @@ export async function createSnippet (formState: {message: string}, formData: For
         }
     }
 
+    revalidatePath('/')
     redirect('/')
 }
