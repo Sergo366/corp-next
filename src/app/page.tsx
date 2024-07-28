@@ -1,30 +1,28 @@
-import {db} from "@/db";
-import Link from "next/link";
+import { Button } from '@nextui-org/react';
+import * as actions from '@/actions';
+import { auth } from '@/auth';
+import Profile from '@/components/profile';
 
 export default async function Home() {
-  const snippets = await db.snippet.findMany()
+    const session = await auth();
 
-  return (
-      <div className={'flex flex-col gap-2'}>
-          <div className={'flex m-2 justify-between items-center'}>
-              <h1 className={'text-xl font-bold'}>Snippets</h1>
-              <Link
-                  href={'/snippets/new'}
-                  className={'border p-2 rounded'}
-              >
-                  New
-              </Link>
-          </div>
-          {snippets.map((snip) => (
-              <Link
-                  href={`/snippets/${snip.id}`}
-                  className={'flex justify-between items-center p-2 border rounded'}
-                  key={snip.id}
-              >
-                  {snip.title}
-                  <p>View</p>
-              </Link>
-          ))}
-      </div>
-  );
+    return (
+        <div>
+            <form action={actions.signIn}>
+                <Button type="submit">Sign In</Button>
+            </form>
+
+            <form action={actions.signOut}>
+                <Button type="submit">Sign Out</Button>
+            </form>
+
+            {session?.user ? (
+                <div>{JSON.stringify(session.user)}</div>
+            ) : (
+                <div>Signed Out</div>
+            )}
+
+            <Profile />
+        </div>
+    );
 }
