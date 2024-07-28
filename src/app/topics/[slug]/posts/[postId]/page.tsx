@@ -1,9 +1,3 @@
-const PostShowPage = () => {
-    return (
-        <div>
-            PostShowPage
-        </div>
-    );
-};
-
-export default PostShowPage;
+export default function PostShowPage() {
+  return <div>Post Show Page</div>;
+}

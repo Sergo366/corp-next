@@ -1,21 +1,13 @@
-'use client'
+'use client';
 
-import React from 'react';
-import {useSession} from "next-auth/react";
+import { useSession } from 'next-auth/react';
 
-const Profile = () => {
-    const session = useSession();
+export default function Profile() {
+  const session = useSession();
 
-    console.log('session', session)
+  if (session.data?.user) {
+    return <div>From client: {JSON.stringify(session.data.user)}</div>;
+  }
 
-    return (
-        <div>
-            {session.data?.user
-                ? 'user is signed in'
-                : 'user is signed out'
-            }
-        </div>
-    );
-};
-
-export default Profile;
+  return <div>From client: user is NOT signed in</div>;
+}
