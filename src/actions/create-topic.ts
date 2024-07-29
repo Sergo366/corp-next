@@ -2,6 +2,10 @@
 
 import {z} from "zod";
 import {auth} from "@/auth";
+import {db} from "@/db";
+import {redirect} from "next/navigation";
+import Paths from "@/paths";
+import {revalidatePath} from "next/cache";
 
 const createTopicScheme = z.object({
     name: z.string().min(3).regex(/[a-z-]/, {
@@ -22,12 +26,11 @@ export async function createTopic(
     formState: CreateTopicFormState,
     formData: FormData
 ): Promise<CreateTopicFormState> {
+    const session = await auth()
     const result = createTopicScheme.safeParse({
         name: formData.get('name'),
         description: formData.get('description'),
     })
-
-    const session = await auth()
 
     if (!session || !session.user) {
         return {
@@ -41,5 +44,29 @@ export async function createTopic(
         return {errors: result.error.flatten().fieldErrors}
     }
 
-    return {errors: {}}
+    try {
+        await db.topic.create({
+            data: {
+                slug: result.data.name,
+                description: result.data.description,
+            }
+        })
+    } catch (e: unknown) {
+        if (e instanceof Error) {
+            return {
+                errors: {
+                    _form: [e.message]
+                }
+            }
+        }
+
+        return {
+            errors: {
+                _form: ['Something went wrong'],
+            }
+        }
+    }
+
+    revalidatePath(Paths.home())
+    redirect(Paths.topicShow(result.data.name))
 }
